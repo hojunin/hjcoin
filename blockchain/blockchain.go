@@ -7,9 +7,9 @@ import (
 )
 
 type block struct{
-	data string
-	hash string
-	prevHash string
+	Data string
+	Hash string
+	PrevHash string
 }
 
 // Block의 포인터들의 Slice. 블록체인은 길어질 수 있기때문에 매번 복사할 수 없다. 그래서 주소만 저장
@@ -18,8 +18,8 @@ type blockchain struct{
 }
 
 func (b *block) calculateHash(){
-	hash := sha256.Sum256([]byte(b.data+b.prevHash))
-	b.hash=fmt.Sprintf("%x", hash)
+	hash := sha256.Sum256([]byte(b.Data+b.PrevHash))
+	b.Hash=fmt.Sprintf("%x", hash)
 }
 
 func getLastHash() string {
@@ -27,7 +27,7 @@ func getLastHash() string {
 	if totalBlockLen ==0{
 		return ""
 	}
-	return GetBlockchain().blocks[totalBlockLen-1].hash
+	return GetBlockchain().blocks[totalBlockLen-1].Hash
 }
 
 func createBlock(data string) *block {
@@ -35,6 +35,10 @@ func createBlock(data string) *block {
 	newBlock.calculateHash()
 
 	return &newBlock
+}
+
+func (b *blockchain) AddBlock(data string)  {
+	b.blocks = append(b.blocks, createBlock(data))
 }
 
 //SingleTon Patturn
@@ -46,8 +50,13 @@ func GetBlockchain() *blockchain{
 	if b ==nil{
 		once.Do(func ()  {
 			b= &blockchain{}
+			b.AddBlock("Genesis")
 		})
 	}
 
 	return b
+}
+
+func (b *blockchain) AllBlock() []*block  {
+	return b.blocks
 }
