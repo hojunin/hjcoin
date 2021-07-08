@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type block struct{
+type Block struct{
 	Data string
 	Hash string
 	PrevHash string
@@ -14,10 +14,10 @@ type block struct{
 
 // Block의 포인터들의 Slice. 블록체인은 길어질 수 있기때문에 매번 복사할 수 없다. 그래서 주소만 저장
 type blockchain struct{
-	blocks []*block
+	blocks []*Block
 }
 
-func (b *block) calculateHash(){
+func (b *Block) calculateHash(){
 	hash := sha256.Sum256([]byte(b.Data+b.PrevHash))
 	b.Hash=fmt.Sprintf("%x", hash)
 }
@@ -30,8 +30,8 @@ func getLastHash() string {
 	return GetBlockchain().blocks[totalBlockLen-1].Hash
 }
 
-func createBlock(data string) *block {
-	newBlock := block{data, "", getLastHash()}
+func createBlock(data string) *Block {
+	newBlock := Block{data, "", getLastHash()}
 	newBlock.calculateHash()
 
 	return &newBlock
@@ -57,6 +57,6 @@ func GetBlockchain() *blockchain{
 	return b
 }
 
-func (b *blockchain) AllBlock() []*block  {
+func (b *blockchain) AllBlock() []*Block  {
 	return b.blocks
 }
