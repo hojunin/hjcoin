@@ -1,30 +1,46 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"text/template"
 
-	"github.com/hojunin/hjcoin/blockchain"
+	"github.com/hojunin/hjcoin/utils"
 )
 
 const port string = ":4000"
 
-type homeData struct{
-	PageTitle string
-	Blocks []*blockchain.Block
+type URLDescription struct {
+	URL string `json:"url"`
+	Method string `json:"method"`
+	Description string `json:"description"`
+	Payload string `json:"payload,omitempty"`
 }
 
-func home (rw http.ResponseWriter, r *http.Request)  {
-	// fmt.Fprint(rw, "Hello From Home")
-	tmpl := template.Must(template.ParseFiles("templates/home.gohtml"))
-	data := homeData{"Home", blockchain.GetBlockchain().AllBlock()}
-	tmpl.Execute(rw, data)
+func documentation(rw http.ResponseWriter, r *http.Request)  {
+	data:= []URLDescription{
+		{
+			URL: "/",
+			Method : "GET",
+			Description: "See Documentation",
+		},
+		{
+			URL: "/blocks",
+			Method: "POST",
+			Description:"Add A Block",
+			Payload:"data:string",
+		},
+	}
+	rw.Header().Add("Content-Type", "application/json")
+
+	b, err := json.Marshal(data)
+	utils.HandleErr(err)
+	fmt.Fprintf(rw,"%s",b)
 }
 
 func main(){
-	http.HandleFunc("/", home)
-	fmt.Printf("Listening on http://localhost%s\n", port)
-	log.Fatal(http.ListenAndServe(port,nil))
+	http.HandleFunc("/", documentation)
+	fmt.Printf("Listening on http://localhost%s", port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }
