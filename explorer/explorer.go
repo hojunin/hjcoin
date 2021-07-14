@@ -11,7 +11,6 @@ import (
 
 
 const( 
-	port string = ":4000"
 	templateDir string = "explorer/templates/" 
 )
 var templates *template.Template
@@ -41,7 +40,7 @@ func add(rw http.ResponseWriter, r *http.Request)  {
 
 
 
-func Start()  {
+func Start(port int)  {
 	// * 미리 작성해둔 템플릿을 로드합니다. 
 	templates = template.Must(template.ParseGlob(templateDir+"pages/*.gohtml"))
 	templates = template.Must(templates.ParseGlob(templateDir+"partials/*.gohtml"))
@@ -49,7 +48,7 @@ func Start()  {
 	http.HandleFunc("/", home)
 	http.HandleFunc("/add", add)
 
-	fmt.Printf("Listening on http://localhost%s\n", port)
+	fmt.Printf("Listening on http://localhost:%d\n", port)
 	// * 서버를 가동합니다.
-	log.Fatal(http.ListenAndServe(port,nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port),nil))
 }

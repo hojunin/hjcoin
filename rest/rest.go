@@ -11,7 +11,7 @@ import (
 )
 
 
-const port string = ":4000"
+var port string
 
 type urlDescription struct {
 	URL url `json:"url"`
@@ -78,7 +78,8 @@ func blocks (rw http.ResponseWriter, r *http.Request)  {
 	}
 }
 
-func Start()  {
+func Start(aport int)  {
+	port = fmt.Sprintf(":%d", aport)
 	http.HandleFunc("/", documentation)
 	http.HandleFunc("/blocks", blocks)
 	fmt.Printf("Listening on http://localhost%s", port)
