@@ -2,14 +2,16 @@ package blockchain
 
 import (
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"sync"
 )
 
 type Block struct{
-	Data string
-	Hash string
-	PrevHash string
+	Data string `json:"data"` 
+	Hash string `json:"hash"`
+	PrevHash string `json:"prev_hash,omitempty"`
+	Height int `json:"height"`
 }
 
 // Block의 포인터들의 Slice. 블록체인은 길어질 수 있기때문에 매번 복사할 수 없다. 그래서 주소만 저장
@@ -31,7 +33,7 @@ func getLastHash() string {
 }
 
 func createBlock(data string) *Block {
-	newBlock := Block{data, "", getLastHash()}
+	newBlock := Block{data, "", getLastHash(), len(GetBlockchain().blocks)+1}
 	newBlock.calculateHash()
 
 	return &newBlock
@@ -59,4 +61,14 @@ func GetBlockchain() *blockchain{
 
 func (b *blockchain) AllBlock() []*Block  {
 	return b.blocks
+}
+
+var ErrNotFound = errors.New("block not found")
+
+// zero - index라서 -1해줌
+func (b *blockchain) GetBlock(height int) (*Block, error) {
+	if height>len(b.blocks){
+		return nil, ErrNotFound
+	}
+	return b.blocks[height-1], nil
 }
