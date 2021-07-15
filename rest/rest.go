@@ -100,12 +100,21 @@ func blocks (rw http.ResponseWriter, r *http.Request)  {
 	}
 }
 
+func jsonContentTypeMiddleware (next http.Handler) http.Handler  {
+	return http.HandlerFunc(func (rw http.ResponseWriter, r *http.Request)  {
+		rw.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(rw, r)
+	})
+	
+}
+
 func Start(aport int)  {
-	handler := mux.NewRouter()
+	router := mux.NewRouter()
 	port = fmt.Sprintf(":%d", aport)
-	handler.HandleFunc("/", documentation).Methods("GET")
-	handler.HandleFunc("/blocks", blocks).Methods("GET", "POST")
-	handler.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
+	router.Use(jsonContentTypeMiddleware)
+	router.HandleFunc("/", documentation).Methods("GET")
+	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
+	router.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
 	fmt.Printf("Listening on http://localhost%s", port)
-	log.Fatal(http.ListenAndServe(port, handler))
+	log.Fatal(http.ListenAndServe(port, router))
 }
