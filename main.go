@@ -1,9 +1,9 @@
 package main
 
-import "github.com/hojunin/hjcoin/cli"
+import "github.com/hojunin/hjcoin/blockchain"
 
 
 
 func main(){
-	cli.Start()
+	blockchain.Blockchain()
 }

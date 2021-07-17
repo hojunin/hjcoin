@@ -1,4 +1,4 @@
-package blockchain
+package blockchain_local
 
 import (
 	"crypto/sha256"
