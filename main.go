@@ -1,10 +1,9 @@
 package main
 
-import (
-	"github.com/hojunin/hjcoin/rest"
-)
+import "github.com/hojunin/hjcoin/cli"
+
 
 
 func main(){
-	rest.Start(4000)
+	cli.Start()
 }
