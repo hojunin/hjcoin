@@ -72,7 +72,7 @@ func block(rw http.ResponseWriter, r*http.Request)  {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["height"])
 	utils.HandleErr(err)
-	block ,err:= blockchain.GetBlockchain().GetBlock(id)
+	block ,err:= blockchain.Blockchain().GetBlock(id)
 
 	encoder := json.NewEncoder(rw)
 	if err==blockchain.ErrNotFound{

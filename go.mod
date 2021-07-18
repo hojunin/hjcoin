@@ -3,7 +3,7 @@ module github.com/hojunin/hjcoin
 go 1.16
 
 require (
-	github.com/boltdb/bolt v1.3.1 // indirect
+	github.com/boltdb/bolt v1.3.1
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
 	github.com/evnix/boltdbweb v0.0.0-20191029203843-5b16e6623bd9 // indirect
 	github.com/gin-gonic/gin v1.7.2 // indirect
