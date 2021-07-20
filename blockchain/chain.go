@@ -1,8 +1,6 @@
 package blockchain
 
 import (
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"sync"
 
@@ -22,8 +20,7 @@ type blockchain struct{
 }
 
 func (b *blockchain) restore(data []byte)  {
-	decoder:= gob.NewDecoder(bytes.NewReader(data))
-	decoder.Decode(b)
+	utils.FromBytes(b, data)
 }
 
 func (b *blockchain) persist()  {
