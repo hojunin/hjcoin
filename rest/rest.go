@@ -82,11 +82,10 @@ func block(rw http.ResponseWriter, r*http.Request)  {
 
 
 
-func blocks (rw http.ResponseWriter, r *http.Request)  {
+func blocks(rw http.ResponseWriter, r *http.Request)  {
 	switch r.Method {
 	case "GET":
 		json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
-		break
 	case "POST":
 		var addBlockBody addBlockBody
 		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
@@ -97,7 +96,7 @@ func blocks (rw http.ResponseWriter, r *http.Request)  {
 	}
 }
 
-func jsonContentTypeMiddleware (next http.Handler) http.Handler  {
+func jsonContentTypeMiddleware(next http.Handler) http.Handler  {
 	return http.HandlerFunc(func (rw http.ResponseWriter, r *http.Request)  {
 		rw.Header().Add("Content-Type", "application/json")
 		next.ServeHTTP(rw, r)

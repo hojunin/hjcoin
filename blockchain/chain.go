@@ -24,13 +24,14 @@ func (b *blockchain) restore(data []byte)  {
 }
 
 func (b *blockchain) persist()  {
-	db.SaveBlockchain(utils.Tobytes(b))
+	db.SaveCheckPoint(utils.Tobytes(b))
 }
 
 func (b *blockchain) AddBlock(data string)  {
 	block := createBlock(data, b.NewestHash, b.Height+1)
 	b.NewestHash = block.Hash
 	b.Height=block.Height
+	b.persist()
 }
 
 func (b *blockchain) Blocks() []*Block {
@@ -52,16 +53,15 @@ func Blockchain() *blockchain{
 	if b ==nil{
 		once.Do(func ()  {
 			b= &blockchain{"", 0}
-			fmt.Printf("Newest Hash : %s\nHeight:%d\n", b.NewestHash, b.Height)
 			checkpoint := db.Checkpoint()
 			if checkpoint==nil{
+				fmt.Println("Initializing...")
 				b.AddBlock("Genesis")
 			}else{
-				fmt.Println("Restoring")
+				fmt.Println("Restoring...")
 				b.restore(checkpoint)
 			}
 		})
 	}
-	fmt.Printf("Newest Hash : %s\nHeight:%d\n", b.NewestHash, b.Height)
 	return b
 }

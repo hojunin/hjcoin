@@ -14,11 +14,11 @@ const (
 	blocksBucket = "blocks"
 	checkpoint = "checkpoint"
 )
-
+// DB 연결 종료
 func Close()  {
 	DB().Close()
 }
-
+// DB 연결
 func DB() *bolt.DB{
 	if db == nil{
 		dbPointer, err := bolt.Open(dbName,0600,nil)
@@ -35,7 +35,7 @@ func DB() *bolt.DB{
 	return db
 }
 
-
+// DB에 Block 저장 key : Hash, data : []byte
 func SaveBlock(hash string, data []byte)  {
 	err := DB().Update(func(t *bolt.Tx) error {
 		bucket := t.Bucket([]byte(blocksBucket))
@@ -45,7 +45,8 @@ func SaveBlock(hash string, data []byte)  {
 	utils.HandleErr(err)
 }
 
-func SaveBlockchain(data []byte)  {
+// DB에 BlockChain을 저장함
+func SaveCheckPoint(data []byte)  {
 	err := DB().Update(func(t *bolt.Tx) error {
 		bucket := t.Bucket([]byte(dataBucket))
 		err := bucket.Put([]byte(checkpoint), data)
@@ -54,6 +55,7 @@ func SaveBlockchain(data []byte)  {
 	utils.HandleErr(err)
 }
 
+// DB에서 특정 CheckPoint에 해당하는 데이터를 리턴
 func Checkpoint() []byte {
 	var data []byte
 	DB().View(func(t *bolt.Tx) error {
@@ -61,10 +63,10 @@ func Checkpoint() []byte {
 		data = bucket.Get([]byte(checkpoint))
 		return nil
 	})
-
 	return data
 }
 
+// DB에서 특정 Block을 리턴
 func Block(hash string) []byte {
 	var data []byte
 	DB().View(func(t *bolt.Tx) error {
