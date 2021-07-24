@@ -12,6 +12,7 @@ func HandleErr(err error)  {
 	}
 }
 
+// 어떤 데이터타입이든 받아서 []byte 타입으로 바꿔주는 함수
 func Tobytes(i interface{}) []byte  {
 	var aBuffer bytes.Buffer
 	encoder := gob.NewEncoder(&aBuffer)	
