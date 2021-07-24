@@ -55,7 +55,7 @@ func documentation(rw http.ResponseWriter, r *http.Request)  {
 			Payload:"data:string",
 		},
 		{
-			URL: url("/blocks/{id}"),
+			URL: url("/blocks/{hash}"),
 			Method : "GET",
 			Description: "See A Block",
 		},
@@ -69,7 +69,7 @@ func documentation(rw http.ResponseWriter, r *http.Request)  {
 
 func block(rw http.ResponseWriter, r*http.Request)  {
 	vars := mux.Vars(r)
-	id, err := vars["hash"]
+	hash := vars["hash"]
 	block ,err:= blockchain.FindBlock(hash)
 
 	encoder := json.NewEncoder(rw)
@@ -85,16 +85,13 @@ func block(rw http.ResponseWriter, r*http.Request)  {
 func blocks (rw http.ResponseWriter, r *http.Request)  {
 	switch r.Method {
 	case "GET":
-		return
-		// rw.Header().Add("Content-Type", "application/json")
-		// json.NewEncoder(rw).Encode(blockchain.Blockchain().AllBlock())
+		json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
 		break
 	case "POST":
-		return
-		// var addBlockBody addBlockBody
-		// utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
-		// blockchain.GetBlockchain().AddBlock(addBlockBody.Message)
-		// rw.WriteHeader(http.StatusCreated)
+		var addBlockBody addBlockBody
+		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+		blockchain.Blockchain().AddBlock(addBlockBody.Message)
+		rw.WriteHeader(http.StatusCreated)
 	default:
 		break
 	}

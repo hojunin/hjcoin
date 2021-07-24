@@ -15,6 +15,10 @@ const (
 	checkpoint = "checkpoint"
 )
 
+func Close()  {
+	DB().Close()
+}
+
 func DB() *bolt.DB{
 	if db == nil{
 		dbPointer, err := bolt.Open(dbName,0600,nil)

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/hojunin/hjcoin/explorer"
 	"github.com/hojunin/hjcoin/rest"
@@ -14,7 +15,7 @@ func usage()  {
 	fmt.Println("Welcome To hjcoin\n")	
 	fmt.Println("-port    ---->  Set the PORT of the server")
 	fmt.Println("-mode    ---->  Choose between 'html' and 'rest'")
-	os.Exit(1)
+	runtime.Goexit()
 }
 
 func Start()  {
