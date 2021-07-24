@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/hojunin/hjcoin/db"
@@ -18,6 +19,10 @@ type blockchain struct{
 	Height int `json:"height"`
 }
 
+func (b *blockchain) restore(data []byte)  {
+	utils.FromBytes(b, data)
+}
+
 func (b *blockchain) persist()  {
 	db.SaveBlockchain(utils.Tobytes(b))
 }
@@ -32,9 +37,16 @@ func Blockchain() *blockchain{
 	if b ==nil{
 		once.Do(func ()  {
 			b= &blockchain{"", 0}
-			b.AddBlock("Genesis")
+			fmt.Printf("Newest Hash : %s\nHeight:%d\n", b.NewestHash, b.Height)
+			checkpoint := db.Checkpoint()
+			if checkpoint==nil{
+				b.AddBlock("Genesis")
+			}else{
+				fmt.Println("Restoring")
+				b.restore(checkpoint)
+			}
 		})
 	}
-
+	fmt.Printf("Newest Hash : %s\nHeight:%d\n", b.NewestHash, b.Height)
 	return b
 }

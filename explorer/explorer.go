@@ -21,7 +21,7 @@ type homeData struct{
 
 // * /home을 제어하는 핸들러
 func home (rw http.ResponseWriter, r *http.Request)  {
-	data := homeData{"Home", blockchain.GetBlockchain().AllBlock()}
+	data := homeData{"Home", nil}
 	templates.ExecuteTemplate(rw, "home", data)
 }
 
@@ -33,7 +33,7 @@ func add(rw http.ResponseWriter, r *http.Request)  {
 	case "POST":
 		r.ParseForm()
 		data := r.Form.Get("blockData")
-		blockchain.GetBlockchain().AddBlock(data)
+		blockchain.Blockchain().AddBlock(data)
 		http.Redirect(rw, r, "/", http.StatusPermanentRedirect)
 	}
 }
