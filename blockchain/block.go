@@ -2,7 +2,6 @@ package blockchain
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
@@ -12,13 +11,13 @@ import (
 
 // hash값이 difficulty개의 0으로 시작하는 것을 찾는다.
 type Block struct{
-	Data string `json:"data"` 
 	Hash string `json:"hash"`
 	PrevHash string `json:"prev_hash,omitempty"`
 	Height int `json:"height"`
 	Difficulty int `json:"difficulty"`
 	Nonce int `json:"nonce"`
 	Timestamp int `json:"timestamp"`
+	Transactions []*Tx `json:"transactions"`
 }
 // BlockChain에 블록을 저장한다. 
 func (b *Block) persist()  {
@@ -34,7 +33,6 @@ func (b *Block) mine(){
 	for{
 		b.Timestamp = int(time.Now().Unix())
 		hash := utils.Hash(b)
-		fmt.Printf("Target: %s\n Hash: %s\n Nonce: %d\n\n", target, hash, b.Nonce)
 		if strings.HasPrefix(hash, target){
 			b.Hash =hash
 			break
@@ -56,14 +54,14 @@ func FindBlock(hash string) (*Block, error) {
 	return block,nil
 }
 
-func createBlock(data string, prevHash string, height int) *Block{
+func createBlock(prevHash string, height int) *Block{
 	block:=&Block{
-		Data: data,
 		Hash: "",
 		PrevHash:prevHash,
 		Height: height,
 		Difficulty: Blockchain().difficulty(),
 		Nonce: 0,
+		Transactions: []*Tx{makeCoinbaseTx("hj")},
 	}
 	block.mine()
 	block.persist()
