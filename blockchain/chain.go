@@ -58,30 +58,32 @@ func (b *blockchain) Blocks() []*Block {
 	return blocks
 }
 
-func (b *blockchain) txOuts() []*TxOut {
-	var txOuts []*TxOut
-	blocks := b.Blocks()
-	for _, block := range blocks {
-		for _, tx := range block.Transactions{
-			txOuts = append(txOuts, tx.TxOuts...)
-		}
-	}
-	return txOuts
-}
+// func (b *blockchain) txOuts() []*TxOut {
+// 	var txOuts []*TxOut
+// 	blocks := b.Blocks()
+// 	for _, block := range blocks {
+// 		for _, tx := range block.Transactions{
+// 			txOuts = append(txOuts, tx.TxOuts...)
+// 		}
+// 	}
+// 	return txOuts
+// }
 
-func (b *blockchain) TxOutsByAddress(address string) []*TxOut {
-	var ownedTxOuts []*TxOut
-	txOuts := b.txOuts()
-	for _, txOut := range txOuts {
-		if txOut.Owner == address {
-			ownedTxOuts = append(ownedTxOuts, txOut)
+func (b *blockchain) UTxOutsByAddress(address string) []*TxOut {
+	var uTxOuts []*UTxOut
+	creatorTxs := make(map[string]bool)
+	
+	for _, block := range b.Blocks(){
+		for _, tx := range block.Transactions {
+			for _, input := range tx.TxIns{
+				if input
+			}
 		}
 	}
-	return ownedTxOuts
 }
 
 func (b *blockchain) BalanceByAddress(address string) int {
-	TxOuts := b.TxOutsByAddress(address)
+	TxOuts := b.UTxOutsByAddress(address)
 	var amount int
 	for _, txOut := range TxOuts {
 		amount+=txOut.Amount

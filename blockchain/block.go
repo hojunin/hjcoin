@@ -64,6 +64,7 @@ func createBlock(prevHash string, height int) *Block{
 		Transactions: []*Tx{makeCoinbaseTx("hj")},
 	}
 	block.mine()
+	block.Transactions = Mempool.TxToConfirm()
 	block.persist()
 
 	return block

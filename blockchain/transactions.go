@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"errors"
 	"time"
 
 	"github.com/hojunin/hjcoin/utils"
@@ -18,13 +17,19 @@ type Tx struct{
 }
 
 type TxIn struct{
-	Owner string `json:"owner"`
+	TxID string `json:"txId"` 
+	Index int  `json:"index"`
 	Amount int `json:"amount"`
 }
 type TxOut struct{
 	Owner string `json:"owner"`
 	Amount int `json:"amount"`
 } 
+type UTxOut struct{
+	TxID string `json:"txId"`
+	Index int `json:"index"`
+	Amount int `json:"amount"`
+}
 
 type mempool struct {
 	Txs []*Tx
@@ -37,38 +42,38 @@ func (t *Tx) getId()  {
 }
 
 func makeTx(from, to string, amount int) (*Tx, error) {
-	if Blockchain().BalanceByAddress(from) < amount {
-		return nil, errors.New("Not enough coin")
-	}
+	// if Blockchain().BalanceByAddress(from) < amount {
+	// 	return nil, errors.New("Not enough coin")
+	// }
 
-	var txIns []*TxIn
-	var txOuts []*TxOut
-	total := 0
-	oldTxOuts := Blockchain().TxOutsByAddress(from)
-	for _, txOut := range oldTxOuts {
-		if total > amount {
-			break
-		}
-		txIn := &TxIn{txOut.Owner, txOut.Amount}
-		txIns = append(txIns, txIn)
-		total += txOut.Amount
-	}
+	// var txIns []*TxIn
+	// var txOuts []*TxOut
+	// total := 0
+	// oldTxOuts := Blockchain().TxOutsByAddress(from)
+	// for _, txOut := range oldTxOuts {
+	// 	if total > amount {
+	// 		break
+	// 	}
+	// 	txIn := &TxIn{txOut.Owner, txOut.Amount}
+	// 	txIns = append(txIns, txIn)
+	// 	total += txOut.Amount
+	// }
 
-	change := total - amount
-	if change != 0{
-		changeTxOut := &TxOut{from, change}
-		txOuts = append(txOuts, changeTxOut)
-	}
-	txOut := &TxOut{to, amount}
-	txOuts = append(txOuts, txOut)
-	tx := &Tx{
-		Id: "",
-		Timestamp: int(time.Now().Unix()),
-		TxIns: txIns,
-		TxOuts: txOuts,
-	}
-	tx.getId()
-	return tx, nil
+	// change := total - amount
+	// if change != 0{
+	// 	changeTxOut := &TxOut{from, change}
+	// 	txOuts = append(txOuts, changeTxOut)
+	// }
+	// txOut := &TxOut{to, amount}
+	// txOuts = append(txOuts, txOut)
+	// tx := &Tx{
+	// 	Id: "",
+	// 	Timestamp: int(time.Now().Unix()),
+	// 	TxIns: txIns,
+	// 	TxOuts: txOuts,
+	// }
+	// tx.getId()
+	// return tx, nil
 }
 
 func (m *mempool) AddTx(to string, amount int) error {
@@ -82,7 +87,7 @@ func (m *mempool) AddTx(to string, amount int) error {
 
 func makeCoinbaseTx(address string) *Tx {
 	txIns := []*TxIn{
-		{"COINBASE", minerReward},
+		{"", -1 , "COINBASE"},
 	}
 	txOuts := []*TxOut{
 		{address, minerReward},
